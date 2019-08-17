@@ -1,0 +1,29 @@
+{
+  "name": "presentrtc_api",
+  "version": "1.0.0",
+  "description": "WebRtc with Media Soup",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lr001dev/presentRtc_api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lr001dev/presentRtc_api/issues"
+  },
+  "homepage": "https://github.com/lr001dev/presentRtc_api#readme",
+  "dependencies": {
+    "bcrypt": "^3.0.6",
+    "dotenv": "^8.0.0",
+    "express": "^4.17.1",
+    "express-session": "^1.16.2",
+    "mediasoup": "^3.2.5",
+    "method-override": "^3.0.0",
+    "socket.io": "^2.2.0"
+  }
+}
