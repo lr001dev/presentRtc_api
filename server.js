@@ -140,24 +140,24 @@ async function runSocketServer() {
     });
 
     //Socket Joining Chat Room
-  socket.on(`room`, (roomId, sockId) => {
-    socket.join(roomId._id)
+  socket.on(`room`, (roomId) => {
+    socket.join(roomId)
 
     //Lets create an array of active client list to send to front end
-    socketServer.of('/').in(roomId._id).clients((error,peers) => {
+    socketServer.of('/').in(roomId).clients((error,peers) => {
 
       let activePeers = []
       peers.map((peer, index) => {
         let newPeer = {
           peerId: peer,
-          peerIndex: index
+          peerIndex: index,
         }
         activePeers.push(newPeer)
         console.log(`activePeers`)
         console.log(activePeers)
       })
       //Sending to front end
-      socketServer.to(roomId._id).emit(`currentPeers`, `just entered the room`, roomId, activePeers)
+      socketServer.to(roomId).emit(`currentPeers`, `just entered the room`, roomId, activePeers)
     })
   })
     socket.on('getRouterRtpCapabilities', (data, callback) => {
