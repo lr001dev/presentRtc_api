@@ -131,8 +131,12 @@ async function runSocketServer() {
       socket.emit('newProducer');
     }
 
-    socket.on('disconnect', () => {
-      console.log('client disconnected');
+    socket.on('disconnecting', () => {
+      console.log('client disconnected')
+      console.log(`Subscribed Rooms ${socket.rooms}`)
+      console.log(socket.rooms)
+      console.log(Object.keys(socket.rooms)[0])
+      socketServer.to(Object.keys(socket.rooms)[0]).emit(`deleteFromList`, `deleting from list`, socket.id)
     });
 
     socket.on('connect_error', (err) => {
