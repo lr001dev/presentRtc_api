@@ -120,7 +120,7 @@ async function runSocketServer() {
   //   path: '/server',
   //   log: false,
   // });
-
+let producers = []
   socketServer = socketIO(https)
 
   socketServer.on('connection', (socket) => {
@@ -133,10 +133,9 @@ async function runSocketServer() {
 
     socket.on('disconnecting', () => {
       console.log('client disconnected')
-      console.log(`Subscribed Rooms ${socket.rooms}`)
-      console.log(socket.rooms)
       console.log(Object.keys(socket.rooms)[0])
       socketServer.to(Object.keys(socket.rooms)[0]).emit(`deleteFromList`, `deleting from list`, socket.id)
+      console.log(socket.id)
     });
 
     socket.on('connect_error', (err) => {
@@ -144,8 +143,11 @@ async function runSocketServer() {
     });
 
     //Socket Joining Chat Room
-  socket.on(`room`, (roomId) => {
+  socket.on(`room`, (roomId, peerId, peerDevice) => {
     socket.join(roomId)
+    console.log(`joining room`)
+    console.log(`room id`)
+    console.log(roomId)
 
     //Lets create an array of active client list to send to front end
     socketServer.of('/').in(roomId).clients((error,peers) => {
@@ -153,15 +155,17 @@ async function runSocketServer() {
       let activePeers = []
       peers.map((peer, index) => {
         let newPeer = {
-          peerId: peer,
           peerIndex: index,
+          peerId: peer
+
         }
         activePeers.push(newPeer)
         console.log(`activePeers`)
         console.log(activePeers)
       })
       //Sending to front end
-      socketServer.to(roomId).emit(`currentPeers`, `just entered the room`, roomId, activePeers)
+      socketServer.to(roomId)
+      .emit(`currentPeers`, `just entered the room`, roomId, activePeers, peerId)
     })
   })
     socket.on('getRouterRtpCapabilities', (data, callback) => {
@@ -206,7 +210,10 @@ async function runSocketServer() {
       callback({ id: producer.id });
 
       // inform clients about new producer
-      socket.broadcast.emit('newProducer');
+      socket.broadcast.emit('newProducer')
+      producers.push(socket)
+      // console.log(`the producers socket`)
+      // console.log(socket)
     });
 
     socket.on('consume', async (data, callback) => {
@@ -216,8 +223,27 @@ async function runSocketServer() {
     socket.on('resume', async (data, callback) => {
       await consumer.resume();
       callback();
-    });
-  });
+    })
+
+    socket.on('autoSubscribe', (roomId, peer, peerDevice, peerId) => {
+      // socketServer.to(roomId).emit(`autoSubscribe`, peerDevice, peerId)
+      let name = socketServer.of('/')
+      let key = ''
+      // console.log(`the socket`)
+      // console.log(`coonected${[peerId]}`)
+      // let findPeer = Object.keys(name.connected).forEach((peerKey) => {
+      //   if(peerKey === peerId ){
+      //     key = `${ peerId }`
+      //     console.log(name.sockets[`${key}`])
+      //     socketServer.to(roomId).emit(`autoSubscribe`, peer, peerDevice, peerId)
+      //   }
+      // })
+      // let findPeer = name.connected[`'${peerId}'`]
+      // console.log(findPeer)
+      // console.log(`peer device`)
+      // console.log(peerDevice)
+    })
+  })
 }
 
 async function runMediasoupWorker() {
