@@ -121,11 +121,13 @@ async function runSocketServer() {
   //   log: false,
   // });
 let producers = []
+
   socketServer = socketIO(https)
 
   socketServer.on('connection', (socket) => {
-    console.log('client connected');
-
+    console.log('client connected')
+    let activePeers = []
+    // let activePeers = []
     // inform the client about existence of producer
     if (producer) {
       socket.emit('newProducer');
@@ -152,7 +154,7 @@ let producers = []
     //Lets create an array of active client list to send to front end
     socketServer.of('/').in(roomId).clients((error,peers) => {
 
-      let activePeers = []
+      // let activePeers = []
       peers.map((peer, index) => {
         let newPeer = {
           peerIndex: index,
@@ -205,26 +207,34 @@ let producers = []
     });
 
     socket.on('produce', async (data, callback) => {
-      const {kind, rtpParameters} = data;
+      const {kind, rtpParameters, peerIndex, roomId} = data;
       producer = await producerTransport.produce({ kind, rtpParameters });
       callback({ id: producer.id });
 
       // inform clients about new producer
-      socket.broadcast.emit('newProducer')
+      // socket.broadcast.emit('newProducer')
+
+      console.log(`new producer at index ${peerIndex}`)
+      activePeers[peerIndex].producerId = producer.id
+
+      socketServer.to(roomId)
+      .emit(`newProducer`, `newProducer`, activePeers)
+
+      console.log(activePeers)
       producers.push(socket)
-      // console.log(`the producers socket`)
-      // console.log(socket)
-    });
+    })
 
     socket.on('consume', async (data, callback) => {
-      callback(await createConsumer(producer, data.rtpCapabilities));
+      callback(await createConsumer(data.prodId, data.rtpCapabilities));
     });
 
     socket.on('resume', async (data, callback) => {
       await consumer.resume();
       callback();
     })
-
+    // socket.on(`publishVideo`, (peerIndex) => {
+    //   let addProucerId = activeClients[peerIndex]
+    // })
     socket.on('autoSubscribe', (roomId, peer, peerDevice, peerId) => {
       // socketServer.to(roomId).emit(`autoSubscribe`, peerDevice, peerId)
       let name = socketServer.of('/')
