@@ -1,5 +1,5 @@
 module.exports = {
-  listenIp: '0.0.0.0',
+  listenIp: 'https://presentrtc-api.herokuapp.com',
   listenPort: 3000,
   sslCrt: './server.crt',
   sslKey: './server.key',
@@ -49,7 +49,7 @@ module.exports = {
       listenIps: [
         {
           ip: '127.0.0.1',
-          announcedIp: null,
+          announcedIp: 'https://presentrtc-api.herokuapp.com',
         }
       ],
       maxIncomingBitrate: 1500000,
