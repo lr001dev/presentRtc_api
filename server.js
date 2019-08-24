@@ -16,7 +16,7 @@ const socketIO = require(`socket.io`)
 const cors = require('cors')
 const bodyParser = require('body-parser')
 //Configuration
-const PORT = process.env.PORT || 3002
+const PORT = process.env.PORT || 3003
 
 //Global Variables
 let https
@@ -225,7 +225,7 @@ let producers = []
     })
 
     socket.on('consume', async (data, callback) => {
-      callback(await createConsumer(data.prodId, data.rtpCapabilities));
+      callback(await createConsumer(data.prodId, data.rtpCapabilities))
     });
 
     socket.on('resume', async (data, callback) => {
