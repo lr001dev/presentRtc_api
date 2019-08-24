@@ -47,7 +47,7 @@ let mediasoupRouter;
 async function runExpressApp() {
   //Cors Policy
   ///////////
-  const whiteList = ['https://presentrtc.luisrosario.io', 'https://localhost:3002']
+  const whiteList = ['https://presentrtc.luisrosario.io:3002', 'https://localhost:3002']
   const corsOptions = {
     origin: (origin, callback) => {
       if (origin === undefined || whiteList.indexOf(origin) !== -1) {
