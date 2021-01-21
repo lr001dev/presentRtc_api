@@ -26,6 +26,6 @@
     "express-session": "^1.16.2",
     "mediasoup": "^3.2.5",
     "method-override": "^3.0.0",
-    "socket.io": "^2.2.0"
+    "socket.io": "^2.4.0"
   }
 }
